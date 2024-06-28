@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Col, Card, Button, CardGroup, Badge } from 'react-bootstrap';
 import './Dashboard.css';
+import { getNewsFromLocalStorage, updateReadStatusInLocalStorage } from '../utils/localStorageHelper';
 
 function Dashboard() {
-  const [readStatus, setReadStatus] = useState(Array(10).fill(false));
+  const [news, setNews] = useState([]);
+  const [readStatus, setReadStatus] = useState([]);
 
-  const handleViewOnSite = (idx) => {
+  const handleViewOnSite = (idx, id, link) => {
+    updateReadStatusInLocalStorage(id, true);
     const newReadStatus = [...readStatus];
     newReadStatus[idx] = true;
     setReadStatus(newReadStatus);
+    window.open(link, '_blank');
   };
+
+  useEffect(() => {
+    const storedNews = getNewsFromLocalStorage();
+    setNews(storedNews);
+    setReadStatus(storedNews.map(newsItem => newsItem.readStatus));
+  }, []);
 
   return (
     <>
@@ -18,20 +28,19 @@ function Dashboard() {
       </div>
 
       <CardGroup>
-        {Array.from({ length: 10 }).map((_, idx) => (
-          <Col key={idx}>
+        {news.map((newsItem, idx) => (
+          <Col key={newsItem.id}>
             <Card border="info" style={{ width: '18rem', margin: '10px' }} className="mb-2 news-card">
               <div className="card-img-wrapper">
-                <Card.Img variant="top" src="https://fernandafamiliar.soy/wp-content/uploads/2024/06/captura-de-pantalla_-katherine.png" />
+                <Card.Img variant="top" src={newsItem.image} />
               </div>
               <Card.Body>
-                <Card.Title>Card Title</Card.Title>
+                <Card.Title>{newsItem.title}</Card.Title>
                 <Card.Text>
-                  Some quick example text to build on the card title and make up the
-                  bulk of the card's content.
+                  Created on: {new Date(newsItem.createdAt).toLocaleDateString()}
                 </Card.Text>
                 <div className="d-flex align-items-center">
-                  <Button variant="primary" onClick={() => handleViewOnSite(idx)}>View onSite</Button>
+                  <Button variant="primary" onClick={() => handleViewOnSite(idx, newsItem.id, newsItem.link)}>View onSite</Button>
                   {readStatus[idx] ? (
                     <Badge bg="success" className="ms-2">Leído</Badge>
                   ) : (

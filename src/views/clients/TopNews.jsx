@@ -4,6 +4,7 @@ import setColumns from "./setColumns";
 import Spinner from 'react-bootstrap/Spinner';
 import ClientCrudService from '../../services/ClientCrudService';
 import ModalNews from './ModalNews';
+import { getNewsFromLocalStorage, updateReadStatusInLocalStorage } from '../utils/localStorageHelper';
 
 
 const TopNews = () => {
@@ -24,29 +25,30 @@ const TopNews = () => {
     setItem({ codeItem, typeView, nameView });
   };
 
+  const handleViewOnSite = (id, link) => {
+    updateReadStatusInLocalStorage(id, true);
+    window.open(link, '_blank');
+  };
+
   const OnPageChange = (event) => {
     setPage(event);
   }
 
-  const columnsGrid = (setColumns({ modalDetail }));
+  const columnsGrid = (setColumns({ modalDetail, handleViewOnSite }));
 
   const onRowsRequest = async () => {
 
     let dataSearch = '&per_page=10';
-    let response = [];
+    let response = getNewsFromLocalStorage();;
 
-    response = await ClientCrudService.getAllNews(dataSearch).then(async res => {
-      return res;
-    });
-
-    if (!response?.data) return;
+    if (!response) return;
     setRowsLoading(false);
 
     console.log('response', response);
 
     return {
-      rows: response.data,
-      totalRows: response.data.length
+      rows: response,
+      totalRows: response.length
     };
   };
 

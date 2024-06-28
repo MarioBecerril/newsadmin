@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/Alert';
+import { saveNewsToLocalStorage } from '../utils/localStorageHelper';
+import ClientCrudService from '../../services/ClientCrudService';
 
 async function loginUser(credentials) {
   const { username, password } = credentials;
@@ -16,13 +18,35 @@ async function loginUser(credentials) {
   }
 }
 
-export function Login({token, setToken }) {
+export function Login({ token, setToken }) {
   const Navigate = useNavigate();
 
+  const fetchNews = async () => {
+    try {
+      const dataSearch = {};
+      const response = await ClientCrudService.getAllNews(dataSearch);
+      const newsData = response.data.map(item => ({
+        id: item.id,
+        title: item.title.rendered,
+        image: item.jetpack_featured_media_url,
+        createdAt: item.date,
+        modifiedAt: item.modified,
+        status: item.status,
+        link: item.link,
+        content: item.content.rendered,
+        readStatus: false
+      }));
+
+      saveNewsToLocalStorage(newsData);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    }
+  };
+
   useEffect(() => {
-    if(token) {
+    if (token) {
       Navigate("/home");
-    } 
+    }
   }, [token, Navigate]);
 
   const [username, setUserName] = useState();
@@ -37,7 +61,8 @@ export function Login({token, setToken }) {
       password
     });
 
-    if(tokenData.token){
+    if (tokenData.token) {
+      await fetchNews();
       setToken(tokenData);
       Navigate("/home");
     }
@@ -48,45 +73,45 @@ export function Login({token, setToken }) {
 
   return (
     <>
-    <div className="Auth-form-container products">
-      <form className="Auth-form" onSubmit={handleSubmit}>
-        <div className="Auth-form-content">
-          <div className="text-center">
-                  <img src="logo-fixadmin.png" alt='logo' style={{ width: '250px' }}/>
-                  <h4 className="mt-1 mb-4 pb-1">Welcome to NewsAdmin</h4>
+      <div className="Auth-form-container products">
+        <form className="Auth-form" onSubmit={handleSubmit}>
+          <div className="Auth-form-content">
+            <div className="text-center">
+              <img src="logo-fixadmin.png" alt='logo' style={{ width: '250px' }} />
+              <h4 className="mt-1 mb-4 pb-1">Welcome to NewsAdmin</h4>
+            </div>
+            <div className="form-group">
+              <label style={{ fontSize: '20px' }}>Username</label>
+              <input
+                type="username"
+                className="form-control"
+                placeholder="Enter Username"
+                onChange={e => setUserName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ fontSize: '20px' }}>Password</label>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Enter password"
+                onChange={e => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="d-grid gap-2 mt-3">
+              <button type="submit" className="btn btn-primary">
+                Submit
+              </button>
+            </div>
           </div>
-          <div className="form-group">
-            <label style={{ fontSize: '20px' }}>Username</label>
-            <input
-              type="username"
-              className="form-control"
-              placeholder="Enter Username"
-              onChange={e => setUserName(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label style={{ fontSize: '20px' }}>Password</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Enter password"
-              onChange={e => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="d-grid gap-2 mt-3">
-            <button type="submit" className="btn btn-primary">
-              Submit
-            </button>
-          </div>
-        </div>
-      </form>   
-    </div>
-        {!successLogin
-          ? (<Alert key='danger' variant='danger'>
-            ¡intenta de Nuevo, Datos Invalidos!
-            </Alert>)
-          : ""
-        }
+        </form>
+      </div>
+      {!successLogin
+        ? (<Alert key='danger' variant='danger'>
+          ¡intenta de Nuevo, Datos Invalidos!
+        </Alert>)
+        : ""
+      }
     </>
   );
 }

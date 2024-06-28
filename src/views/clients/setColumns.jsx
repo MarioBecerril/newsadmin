@@ -1,8 +1,11 @@
 import React from "react";
 import styles from "../utils/gridStyles";
+import { Col, Card, Button, CardGroup, Badge } from 'react-bootstrap';
 import dateFormat from 'dateformat';
+import { IoEyeOutline } from "react-icons/io5";
+import { TfiWorld } from "react-icons/tfi";
 
-const setColumns = ({ modalDetail}) => {
+const setColumns = ({ modalDetail, handleViewOnSite}) => {
 
     return [
         {
@@ -20,20 +23,17 @@ const setColumns = ({ modalDetail}) => {
             resizable: true,
         },
         {
-            id: "2",
+            id: "1",
             field: "title",
             label: "title",
             sortable: false,
             resizable: true,
-            width: "300px",
-            cellRenderer: ({
-                data,
-            }) => (data.title.rendered)
+            width: "400px",
         },
         {
-            id: "5",
+            id: "2",
             label: 'image',
-            field: "images.image",
+            field: "image",
             width: "200px",
             sortable: false,
             cellRenderer: ({
@@ -43,7 +43,7 @@ const setColumns = ({ modalDetail}) => {
                 column,
                 colIndex,
                 rowIndex
-            }) => (<img src={data.jetpack_featured_media_url} style={{ width: '200px', padding: '10px', }}/> )
+            }) => (<img src={data.image} style={{ width: '200px', padding: '10px', }}/> )
         },
         {
             id: "6",
@@ -59,7 +59,7 @@ const setColumns = ({ modalDetail}) => {
             sortable: false,
             cellRenderer: ({
                 data,
-            }) => (dateFormat(data.date, "dd/mm/yyyy", true))
+            }) => (dateFormat(data.createdAt, "dd/mm/yyyy", true))
         },
         {
             id: "8",
@@ -67,7 +67,22 @@ const setColumns = ({ modalDetail}) => {
             sortable: false,
             cellRenderer: ({
                 data,
-            }) => (dateFormat(data.modified, "dd/mm/yyyy", true))
+            }) => (dateFormat(data.modifiedAt, "dd/mm/yyyy", true))
+        },
+        {
+            id: "9",
+            field: "readStatus",
+            label: "StatusView",
+            width: '150px',
+            sortable: false,
+            resizable: true,
+            cellRenderer: ({
+                data,
+            }) => (data.readStatus ? (
+                <Badge bg="success" className="ms-2">Leído</Badge>
+              ) : (
+                <Badge bg="danger" className="ms-2">Por leer</Badge>
+              ))            
         },
         {
             id: "buttons",
@@ -82,24 +97,25 @@ const setColumns = ({ modalDetail}) => {
                 <div style={styles.styleButton.buttonsCellContainer}>
                     
                     <button
-                            title="Edit"
+                            title="Preview"
                             style={styles.styleButton.editButton}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                modalDetail(data.code, "Edit");
+                                modalDetail(data.id, "View");
                             }}
                         >
-                            {styles.EDIT_SVG}
+                            <IoEyeOutline />
                         </button> {" - "}
                     <button
-                        title="View"
-                        style={styles.styleButton.viewButton}
+                        title="View OnSite"
+                        style={styles.styleButton.editButton}
                         onClick={(e) => {
                             e.stopPropagation();
-                            modalDetail(data.code, "View");
+                            handleViewOnSite(data.id, data.link);
+                            window.location.href = '/topnews';
                         }}
                     >
-                        {styles.VIEW_SVG}
+                        <TfiWorld />
                     </button>
                 </div>
             )
