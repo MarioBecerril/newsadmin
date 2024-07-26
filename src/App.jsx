@@ -10,6 +10,9 @@ import { ProtectedRoute } from "./components/app/ProtectedRoute";
 import TopNews from './views/clients/TopNews';
 import { NotFound } from './views/pages/NotFound';
 import useToken from './components/app/useToken';
+import IndexTask from './views/todolist/gpt/index';
+import IndexMeta from './views/todolist/meta/index';
+import IndexClaude from './views/todolist/claude/index';
 
 function App() {
   const {token, setToken} = useToken();
@@ -44,6 +47,39 @@ return (
               isAllowed={!!token }
             >
               <TopNews />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/todo-list-gpt"
+          element={
+            <ProtectedRoute
+              redirectTo="/"
+              isAllowed={!!token }
+            >
+              <IndexTask />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/todo-list-meta"
+          element={
+            <ProtectedRoute
+              redirectTo="/"
+              isAllowed={!!token }
+            >
+              <IndexMeta />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/todo-list-claude"
+          element={
+            <ProtectedRoute
+              redirectTo="/"
+              isAllowed={!!token }
+            >
+              <IndexClaude />
             </ProtectedRoute>
           }
         />
