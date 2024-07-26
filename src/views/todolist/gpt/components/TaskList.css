@@ -1,0 +1,10 @@
+.task-list {
+    width: 80%;
+    margin: 0 auto;
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  .task-list .task {
+    margin-bottom: 10px;
+  }

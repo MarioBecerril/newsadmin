@@ -21,20 +21,15 @@ export default function ModalNews({ show, handleClose, dataItem }) {
   }, [dataItem, show]);
 
   function createMarkup(html) {
-    // Sanitize the HTML
     let cleanHtml = DOMPurify.sanitize(html);
-
-    // Create a temporary DOM element to manipulate the HTML
     const tempElement = document.createElement('div');
     tempElement.innerHTML = cleanHtml;
-
-    // Select all <img> elements and set their styles
     const images = tempElement.getElementsByTagName('img');
     for (let img of images) {
       img.style.maxWidth = '80%';
       img.style.height = 'auto';
       img.style.display = 'block';
-      img.style.margin = '0 auto'; // Center the image
+      img.style.margin = '0 auto';
     }
 
     return { __html: tempElement.innerHTML };

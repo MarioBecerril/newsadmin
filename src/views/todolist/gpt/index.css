@@ -1,0 +1,50 @@
+.app {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  h1 {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .add-task {
+    margin-bottom: 20px;
+  }
+  
+  .add-task input {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .add-task button {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .task-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .task {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .task.completed {
+    text-decoration: line-through;
+    color: gray;
+  }
+  
+  .task button {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
